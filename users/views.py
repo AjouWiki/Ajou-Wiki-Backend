@@ -101,9 +101,9 @@ class is_email_available(APIView):
             return Response({"result": "Forbidden", "status": 403})
         try:
             User.objects.get(email=email)
-            return Response({"result": "possible email", "status": 200})
-        except User.DoesNotExist:
             return Response({"result": "impossible email", "status": 403})
+        except User.DoesNotExist:
+            return Response({"result": "possible email", "status": 200})
 
 
 # class ChangePassword(APIView):
