@@ -10,7 +10,7 @@ class CustomUserAdmin(UserAdmin):
         (
             "Profile",
             {
-                "fields": ("name", "email", "department", "sex"),
+                "fields": ("username", "name", "email", "department", "sex"),
                 "classes": ("wide",),
             },
         ),
@@ -36,4 +36,4 @@ class CustomUserAdmin(UserAdmin):
         ),
     )
 
-    list_display = ("username", "name", "email", "department", "sex")
+    list_display = ("name", "username", "email", "department", "sex")

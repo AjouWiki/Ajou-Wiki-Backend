@@ -12,24 +12,17 @@ class Wiki(CommonModel):
         default="",
     )
 
-    title_id = models.ManyToManyField(
+    wiki_detail = models.ManyToManyField(
         "wiki_detail.Wiki_Detail",
-        null=True,
-        blank=True,
         related_name="wiki",
     )
 
     user_id = models.ForeignKey(
         "users.User",
         related_name="wiki",
-        on_delete= models.CASCADE,
+        on_delete=models.CASCADE,
         null=True,
     )
 
-    # tag_id = models.ManyToManyField(
-    #     "rooms.Amenity",
-    #     related_name="tag_id",
-    # )
     def __str__(self) -> str:
         return self.name
-    

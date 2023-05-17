@@ -5,18 +5,29 @@ from wiki.serializers import WikiSerializer
 from rest_framework import serializers
 
 
-class TinyUserSerializer(ModelSerializer):
+class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = "__all__"
+        # fields = "__all__"
+        exclude = (
+            "password",
+            "id",
+            "user_permissions",
+            "groups",
+            "is_staff",
+            "is_active",
+            "first_name",
+            "last_name",
+            "is_superuser",
+        )
 
 
 class PrivateUserSerializer(ModelSerializer):
     wiki = WikiSerializer(many=True, read_only=True)  # 역으로 접근한거 related_name
+
     class Meta:
         model = User
-        fields = ("name", "department", "sex", "email","student_id", "wiki")
-        
+        fields = ("name", "department", "sex", "email", "student_id", "wiki")
 
     def validate(self, data):
         check = "@ajou.ac.kr"

@@ -42,12 +42,12 @@ class Users(APIView):  # 일반 유저 생성
         password = request.data.get("password")
         if not password:
             raise ParseError
-        serializer = serializers.PrivateUserSerializer(data=request.data)
+        serializer = serializers.UserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
             user.set_password(password)
             user.is_active = False
-            user.save()  # save해줘잉
+            user.save()
             token = jwt.encode(
                 {"pk": user.pk},
                 settings.SECRET_KEY,
@@ -63,7 +63,7 @@ class Users(APIView):  # 일반 유저 생성
             email = EmailMessage(mail_title, message, to=[mail_to])
             email.send()
 
-            serializer = serializers.PrivateUserSerializer(user)
+            serializer = serializers.UserSerializer(user)
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
@@ -81,7 +81,7 @@ class ChangePassword(APIView):
         if user.check_password(old_password):  # 예전 비번 확인
             user.set_password(new_password)
             user.save()
-            return Response({"result": "OK", "status":200})
+            return Response({"result": "OK", "status": 200})
         else:
             raise ParseError
 
@@ -99,9 +99,11 @@ class LogIn(APIView):
         if user:
             login(request, user)
             serializer = serializers.PrivateUserSerializer(user)
-            return Response({"result": "OK", "status":200, "user_info":serializer.data})
+            return Response(
+                {"result": "OK", "status": 200, "user_info": serializer.data}
+            )
         else:
-            return Response({"result": "Forbidden", "status":403})
+            return Response({"result": "Forbidden", "status": 403})
 
 
 class LogOut(APIView):
@@ -159,13 +161,14 @@ class Activate(APIView):
         except User.DoesNotExist:
             raise AuthenticationFailed("User Not Found")
 
+
 class is_email_available(APIView):
     def post(self, request):
         email = request.data.get("email", "None")
         if email == "None":
-            return Response({"result": "Forbidden", "status":403})
+            return Response({"result": "Forbidden", "status": 403})
         try:
             User.objects.get(email=email)
-            return Response({"result": "possible email", "status":200})
+            return Response({"result": "possible email", "status": 200})
         except User.DoesNotExist:
-            return Response({"result": "impossible email", "status":403})
+            return Response({"result": "impossible email", "status": 403})

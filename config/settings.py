@@ -205,7 +205,7 @@ EMAIL_HOST = "smtp.gmail.com"  # 메일 호스트 서버
 EMAIL_PORT = "587"  # 서버 포트
 EMAIL_HOST_USER = "AjouWiki@gmail.com"  # 우리가 사용할 Gmail
 # EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")  # 우리가 사용할 Gmail p
-EMAIL_HOST_PASSWORD = "tmp"
+EMAIL_HOST_PASSWORD = "vihgzastsdzadvez"
 EMAIL_USE_TLS = True  # TLS 보안 설정
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  # 응답 메일 관련 설정
 
