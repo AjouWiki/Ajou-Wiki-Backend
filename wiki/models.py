@@ -15,12 +15,14 @@ class Wiki(CommonModel):
     wiki_detail = models.ManyToManyField(
         "wiki_detail.Wiki_Detail",
         related_name="wiki",
+        blank=True,
     )
 
     user_id = models.ForeignKey(
         "users.User",
         related_name="wiki",
         on_delete=models.CASCADE,
+        null=True,
     )
 
     def __str__(self) -> str:
