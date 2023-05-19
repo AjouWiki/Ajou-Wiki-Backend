@@ -43,7 +43,7 @@ class Users(APIView):  # 일반 유저 생성
             serializer = serializers.UserSerializer(user)
             return Response({"result": "OK", "status": 200})
         else:
-            return {"result": "Forbidden", "status": 403}
+            return Response({"result": "Forbidden", "status": 403})
 
 
 class LogIn(APIView):
@@ -81,16 +81,16 @@ class Activate(APIView):
         )
         pk = decoded.get("pk")
         if not pk:
-            return {"result": "Invalid Token", "status": 403}
+            return Response({"result": "Invalid Token", "status": 403})
             # raise AuthenticationFailed("Invalid Token")
         try:
             user = User.objects.get(pk=pk)
             user.is_active = True
             user.save()
-            return {"result": "Authentication PASS", "status": 200}
+            return Response({"result": "Authentication PASS", "status": 200})
             # return Response({"ok": "good"})
         except User.DoesNotExist:
-            return {"result": "User Not Found", "status": 403}
+            return Response({"result": "User Not Found", "status": 403})
             # raise AuthenticationFailed("User Not Found")
 
 
