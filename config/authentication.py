@@ -8,7 +8,6 @@ from django.conf import settings
 
 class TrustMeBroAuthentication(BaseAuthentication):
     def authenticate(self, request):
-        print("hi")
         username = request.headers.get("Trust-Me")
         if not username:
             return None
@@ -21,7 +20,6 @@ class TrustMeBroAuthentication(BaseAuthentication):
 
 class JWTAuthentication(BaseAuthentication):
     def authenticate(self, request):
-        print("jwt hi")
         token = request.headers.get("Jwt")
         if not token:
             return None

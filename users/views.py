@@ -31,19 +31,18 @@ class Users(APIView):  # 일반 유저 생성
                 algorithm="HS256",
             )
             message = (
-                "이메일 확인 -> "
-                + str(token)
-                + "\n 해당 URL로 접속하여 토큰 값을 입력해 주세요.\n URL = http://127.0.0.1:8000/api/v1/users/activate"
+                "아래 URL로 접속하여 계정을 활성화 해주세요.\n URL = http://127.0.0.1:8000/api/v1/users/activate/"
+                + token
             )
-            mail_title = "계정 활성화 확인 이메일"
+            mail_title = "[아주위키] " + str(user.name) + "님 계정 활성화 이메일"
             mail_to = request.data.get("email")
             email = EmailMessage(mail_title, message, to=[mail_to])
             email.send()
 
             serializer = serializers.UserSerializer(user)
-            return Response({"result": "OK", "status": 200})
+            return Response({"result": "회원가입 성공!", "status": 200})
         else:
-            return Response({"result": "Forbidden", "status": 403})
+            return Response({"result": serializer.errors, "status": 403})
 
 
 class LogIn(APIView):
@@ -60,18 +59,18 @@ class LogIn(APIView):
             login(request, user)
             serializer = serializers.PrivateUserSerializer(user)
             return Response(
-                {"result": "OK", "status": 200, "user_info": serializer.data}
+                {"result": "로그인 성공!", "status": 200, "user_info": serializer.data}
             )
         else:
-            return Response({"result": "Forbidden", "status": 403})
+            return Response({"result": "아이디와 비밀번호를 확인해주세요.", "status": 403})
 
 
 from rest_framework.exceptions import AuthenticationFailed
 
 
 class Activate(APIView):
-    def post(self, request):
-        token = request.data.get("Jwt")
+    def get(self, request, Jwt):
+        token = Jwt
         if not token:
             return None
         decoded = jwt.decode(
@@ -84,11 +83,11 @@ class Activate(APIView):
             return Response({"result": "Invalid Token", "status": 403})
             # raise AuthenticationFailed("Invalid Token")
         try:
+            print(pk)
             user = User.objects.get(pk=pk)
             user.is_active = True
             user.save()
             return Response({"result": "Authentication PASS", "status": 200})
-            # return Response({"ok": "good"})
         except User.DoesNotExist:
             return Response({"result": "User Not Found", "status": 403})
             # raise AuthenticationFailed("User Not Found")
@@ -98,7 +97,7 @@ class is_email_available(APIView):
     def post(self, request):
         email = request.data.get("email", "None")
         if email == "None":
-            return Response({"result": "Forbidden", "status": 403})
+            return Response({"result": "None input", "status": 403})
         try:
             User.objects.get(email=email)
             return Response({"result": "impossible email", "status": 403})
@@ -106,71 +105,13 @@ class is_email_available(APIView):
             return Response({"result": "possible email", "status": 200})
 
 
-# class ChangePassword(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def put(self, request):
-#         user = request.user
-#         old_password = request.data.get("old_password")
-#         new_password = request.data.get("new_password")
-#         if not old_password or not new_password:
-#             raise ParseError
-#         if user.check_password(old_password):  # 예전 비번 확인
-#             user.set_password(new_password)
-#             user.save()
-#             return Response({"result": "OK", "status": 200})
-#         else:
-#             raise ParseError
-
-
-# class LogOut(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def post(self, request):
-#         logout(request)  # reuest 필수
-#         return Response({"ok": "bye!"})
-
-
-# class JWTLogIn(APIView):
-#     def post(self, request):
-#         username = request.data.get("username")
-#         password = request.data.get("password")
-#         if not username or not password:
-#             raise ParseError
-#         user = authenticate(
-#             request,
-#             username=username,
-#             password=password,
-#         )
-#         if user:
-#             token = jwt.encode(
-#                 {"pk": user.pk},
-#                 settings.SECRET_KEY,
-#                 algorithm="HS256",
-#             )
-#             return Response({"token": token})
-#         else:
-#             return Response({"error": "wrong password"})
-
-
-# class Me(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         user = request.user
-#         serializer = serializers.PrivateUserSerializer(user)
-#         return Response(serializer.data)
-
-#     def put(self, request):
-#         user = request.user
-#         serializer = serializers.PrivateUserSerializer(
-#             user,
-#             data=request.data,
-#             partial=True,
-#         )
-#         if serializer.is_valid():
-#             user = serializer.save()
-#             serializer = serializers.PrivateUserSerializer(user)
-#             return Response(serializer.data)
-#         else:
-#             return Response(serializer.errors)
+class is_username_available(APIView):
+    def post(self, request):
+        username = request.data.get("username", "None")
+        if username == "None":
+            return Response({"result": "None input", "status": 403})
+        try:
+            User.objects.get(username=username)
+            return Response({"result": "impossible username", "status": 403})
+        except User.DoesNotExist:
+            return Response({"result": "possible username", "status": 200})
