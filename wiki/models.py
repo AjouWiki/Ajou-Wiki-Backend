@@ -21,7 +21,6 @@ class Wiki(CommonModel):
         "users.User",
         related_name="wiki",
         on_delete=models.CASCADE,
-        null=True,
     )
 
     def __str__(self) -> str:

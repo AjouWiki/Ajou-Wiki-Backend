@@ -12,6 +12,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.core.mail import EmailMessage
+from django.shortcuts import render, redirect
 
 
 class Users(APIView):  # 일반 유저 생성
@@ -83,11 +84,13 @@ class Activate(APIView):
             return Response({"result": "Invalid Token", "status": 403})
             # raise AuthenticationFailed("Invalid Token")
         try:
-            print(pk)
             user = User.objects.get(pk=pk)
             user.is_active = True
             user.save()
-            return Response({"result": "Authentication PASS", "status": 200})
+            return redirect(
+                "https://ajouwiki-email.nicepage.io/?version=ff087e76-3171-452f-92ab-337619d75d7e&uid=33c81b50-d7f4-45e3-bdb2-875a620d2ae8",
+            )
+            # return Response({"result": "Authentication PASS", "status": 200})
         except User.DoesNotExist:
             return Response({"result": "User Not Found", "status": 403})
             # raise AuthenticationFailed("User Not Found")
