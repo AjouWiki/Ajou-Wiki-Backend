@@ -10,7 +10,6 @@ class User(AbstractUser):
 
     name = models.CharField(
         max_length=30,
-        default="",
     )
 
     department = models.CharField(
@@ -28,7 +27,4 @@ class User(AbstractUser):
         max_length=30,
     )
 
-    student_id = models.TextField(
-        unique=True,
-        default=0
-    )
+    student_id = models.TextField(default=0, blank=True, null=True)

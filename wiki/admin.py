@@ -8,9 +8,12 @@ from .models import Wiki
 class WikiAdmin(admin.ModelAdmin):
     list_display = (
         "name",
-        "get_title_id",
+        "get_wiki_detail",
+        "created_at",
+        "updated_at",
+        "user_id",
     )
 
     # list_filter = ("category",)
-    def get_title_id(self, obj):
-        return "\n".join([p.title_id for p in obj.title_id.all()])
+    def get_wiki_detail(self, obj):
+        return "\n".join([p.wiki_detail for p in obj.wiki_detail.all()])
