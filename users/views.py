@@ -64,7 +64,7 @@ class LogIn(APIView):
                     {"result": "로그인 성공!", "status": 200, "user_info": serializer.data}
                 )
             else:
-                return Response({"result": "이메일 인증을 해주세요.", "status": 403})    
+                return Response({"result": "이메일 인증을 해주세요.", "status": 401})    
         else:
             return Response({"result": "아이디와 비밀번호를 확인해주세요.", "status": 403})
 
