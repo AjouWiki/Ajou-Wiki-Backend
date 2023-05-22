@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 from .models import User
-from wiki.models import Wiki
-from wiki.serializers import WikiSerializer
+from wikis.models import Wiki
+from wikis.serializers import WikiSerializer
 from rest_framework import serializers
 
 
@@ -30,8 +30,8 @@ class UserSerializer(ModelSerializer):
 
 
 class PrivateUserSerializer(ModelSerializer):
-    wiki = WikiSerializer(many=True, read_only=True)  # 역으로 접근한거 related_name
+    wikis = WikiSerializer(many=True, read_only=True)  # 역으로 접근한거 related_name
 
     class Meta:
         model = User
-        fields = ("name", "department", "sex", "email", "student_id", "wiki")
+        fields = ("name", "department", "sex", "email", "student_id", "wikis")

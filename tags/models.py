@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 class Tag(models.Model):
     id = models.IntegerField(
@@ -8,13 +9,13 @@ class Tag(models.Model):
         null=False,
     )
 
-    name=models.CharField(
+    name = models.CharField(
         max_length=30,
         null=False,
     )
 
     wiki_id = models.ForeignKey(
-        "wiki.Wiki",
+        "wikis.Wiki",
         related_name="tag",
         on_delete=models.CASCADE,
         null=True,
