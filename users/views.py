@@ -57,15 +57,14 @@ class LogIn(APIView):
             password=password,
         )
         if user:
-            if user.is_active:
-                login(request, user)
-                serializer = serializers.PrivateUserSerializer(user)
-                return Response(
-                    {"result": "로그인 성공!", "status": 200, "user_info": serializer.data}
-                )
-            else:
-                return Response({"result": "이메일 인증을 해주세요.", "status": 401})    
+            login(request, user)
+            serializer = serializers.PrivateUserSerializer(user)
+            return Response(
+                {"result": "로그인 성공!", "status": 200, "user_info": serializer.data}
+            )
         else:
+            if not User.objects.filter(username=username)[0].is_active:
+                return Response({"result": "이메일 인증을 해주세요.", "status": 401})    
             return Response({"result": "아이디와 비밀번호를 확인해주세요.", "status": 403})
 
 
