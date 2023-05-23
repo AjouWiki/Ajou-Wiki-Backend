@@ -13,9 +13,9 @@ class Wiki_Detail(CommonModel):
     )
 
     wiki_id = models.ForeignKey(
-        "wiki.Wiki",
+        "wikis.Wiki",
         on_delete=models.CASCADE,
-        related_name="wiki_id",
+        related_name="wiki_details",
     )
 
     order = models.IntegerField()

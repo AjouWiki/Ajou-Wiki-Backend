@@ -6,6 +6,7 @@ from .models import Wiki_Detail
 @admin.register(Wiki_Detail)
 class WikiDetailAdmin(admin.ModelAdmin):
     list_display = (
+        "id",
         "title",
         "wiki_id",
         "order",

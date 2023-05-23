@@ -12,15 +12,9 @@ class Wiki(CommonModel):
         default="",
     )
 
-    wiki_detail = models.ManyToManyField(
-        "wiki_detail.Wiki_Detail",
-        related_name="wiki",
-        blank=True,
-    )
-
     user_id = models.ForeignKey(
         "users.User",
-        related_name="wiki",
+        related_name="wikis",
         on_delete=models.CASCADE,
         null=True,
     )
