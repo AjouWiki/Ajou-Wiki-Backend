@@ -3,11 +3,11 @@ from .models import Wiki
 
 # from wiki.models import Wiki
 from rest_framework import serializers
-from wiki_details.serializers import WikiDetailSerializer
+from wiki_details.serializers import WikiDetailsSerializer
 
 
 class WikiSerializer(ModelSerializer):
-    wiki_details = WikiDetailSerializer(many=True, read_only=True)
+    wiki_details = WikiDetailsSerializer(many=True, read_only=True)
 
     class Meta:
         model = Wiki

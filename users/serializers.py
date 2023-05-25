@@ -30,7 +30,7 @@ class UserSerializer(ModelSerializer):
 
 
 class PrivateUserSerializer(ModelSerializer):
-    wikis = WikiSerializer(many=True, read_only=True)  # 역으로 접근한거 related_name
+    # wikis = WikiSerializer(many=True, read_only=True)  # 역으로 접근한거 related_name
 
     class Meta:
         model = User
