@@ -5,5 +5,5 @@ from . import views
 urlpatterns = [
     path("create", views.CreateTag.as_view()),
     path("delete", views.DeleteTag.as_view()),
-    path("get", views.GetTagList.as_view()),
+    path("<int:pk>", views.GetTagList.as_view()),
 ]

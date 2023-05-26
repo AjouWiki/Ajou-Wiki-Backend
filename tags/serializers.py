@@ -5,12 +5,12 @@ from wikis.serializers import WikiSerializer
 
 
 class TagSerializers(ModelSerializer):
-    wiki_id = WikiSerializer(many=True, read_only=True)
+    wiki_id = None
 
     class Meta:
         model = Tag
+
         fields = (
             "id",
             "name",
-            "wiki_id",
         )

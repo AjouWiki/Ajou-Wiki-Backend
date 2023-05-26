@@ -13,9 +13,10 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.core.mail import EmailMessage
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
-from .models import Tag
+from tags.models import Tag
 from wikis.models import Wiki
-from .serializers import TagSerializers
+from tags.serializers import TagSerializers
+
 
 # Create your views here.
 
@@ -45,13 +46,16 @@ class DeleteTag(APIView): # Tag 제거 ( 잘 됨 )
         
 
 class GetTagList(APIView): # Tag 조회
-    def get(self, request):
-
+    def get_object(self, pk):
+        try:
+            return Wiki.objects.get(pk=pk)
+        except:
+            return None
+    def get(self, request, pk):
+        wiki = self.get_object(pk)
+        if wiki == None:
+            return Response({"result": "존재하지 않는 위키입니다.", "status": 404})
     
-        # wiki_id = request.data.get("wiki_id")
-        # if not wiki_id:
-        #     return ParseError
-        # wiki = get_object_or_404(Wiki, pk=1)
-        # tag = get_object_or_404(Tag, name="멋쟁이", wiki_id=wiki)
-        # result = TagSerializers(tag)
-        return Response({"result": "Tag 리스트 가져오기 성공", "status": 200})
+        tag = Tag.objects.filter(wiki_id=wiki)
+        result = serializers.TagSerializers(tag, many=True)
+        return Response(result.data)
