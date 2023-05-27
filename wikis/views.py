@@ -12,7 +12,9 @@ from rest_framework.exceptions import (
     PermissionDenied,
 )
 from django.conf import settings
-from .models import Wiki
+from wikis.models import Wiki
+from tags.models import Tag
+from tags.serializers import TagSerializers
 from wiki_details.models import Wiki_Detail
 from wiki_details.serializers import WikiDetailsSerializer, MakeWikiDetailsSerializer
 from . import serializers
@@ -21,6 +23,7 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.core.mail import EmailMessage
 from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404
 
 
 class Wikis(APIView):  # 위키 생성
@@ -67,3 +70,25 @@ class WikiDetail(APIView):
             return Response({"result": "존재하지 않는 위키입니다.", "status": 404})
         wiki.delete()
         return Response({"result": "위키 삭제", "status": 200})
+
+class SearchWiki(APIView):
+    def get_wiki_list_by_keyword(self, keyword):
+        try:
+            return Wiki.objects.filter(name=keyword)
+        except:
+            return None
+    def get_wiki_list_by_tag(self, keyword):
+        try:
+            tag = Tag.objects.filter(name=keyword)
+            wiki_list = [t.wiki_id for t in tag]
+            return wiki_list
+        except:
+            return None
+    def get(self, request, keyword):
+        wiki_list1 = self.get_wiki_list_by_tag(keyword)
+        wiki_list2 = self.get_wiki_list_by_keyword(keyword)
+
+        result = serializers.WikiSerializer(wiki_list1, many=True)
+        result2 = serializers.WikiSerializer(wiki_list2, many=True)
+
+        return Response({"result":result.data+result2.data, "status":200})       
