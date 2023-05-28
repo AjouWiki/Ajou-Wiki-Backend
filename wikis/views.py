@@ -71,12 +71,14 @@ class WikiDetail(APIView):
         wiki.delete()
         return Response({"result": "위키 삭제", "status": 200})
 
+
 class SearchWiki(APIView):
     def get_wiki_list_by_keyword(self, keyword):
         try:
             return Wiki.objects.filter(name=keyword)
         except:
             return None
+
     def get_wiki_list_by_tag(self, keyword):
         try:
             tag = Tag.objects.filter(name=keyword)
@@ -84,11 +86,16 @@ class SearchWiki(APIView):
             return wiki_list
         except:
             return None
+
     def get(self, request, keyword):
         wiki_list1 = self.get_wiki_list_by_tag(keyword)
         wiki_list2 = self.get_wiki_list_by_keyword(keyword)
 
         result = serializers.WikiSerializer(wiki_list1, many=True)
         result2 = serializers.WikiSerializer(wiki_list2, many=True)
+        res = []
+        for i in result2.data:
+            if i in result.data:
+                res.append(i)
 
-        return Response({"result":result.data+result2.data, "status":200})       
+        return Response({"result": res, "status": 200})
