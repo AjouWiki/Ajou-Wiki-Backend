@@ -27,7 +27,7 @@ class Wiki_Detail(CommonModel):
     user_id = models.ForeignKey(
         "users.User",
         on_delete=models.PROTECT,
-        related_name="user",
+        related_name="wiki_details",
     )
 
     def __str__(self) -> str:

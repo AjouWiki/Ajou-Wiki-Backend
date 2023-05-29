@@ -15,4 +15,19 @@ class WikiSerializer(ModelSerializer):
             "id",
             "name",
             "wiki_details",
+            "created_at",
+            "updated_at",
+            "user_id",
+        )
+
+
+class SmallWikiSerializer(ModelSerializer):
+    class Meta:
+        model = Wiki
+        fields = (
+            "id",
+            "name",
+            "created_at",
+            "updated_at",
+            "user_id",
         )
