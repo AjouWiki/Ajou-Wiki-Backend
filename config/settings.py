@@ -54,6 +54,7 @@ CUSTOM_APPS = [
     "users.apps.UsersConfig",
     "wikis.apps.WikisConfig",
     "wiki_details.apps.WikiDetailsConfig",
+    'drf_yasg',
     # "rooms.apps.RoomsConfig",
     # "common.apps.CommonConfig",
     # "experiences.apps.ExperiencesConfig",

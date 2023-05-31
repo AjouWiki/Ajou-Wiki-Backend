@@ -14,9 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include  # 우리 파일의 url?
+from django.urls import path, include, re_path  # 우리 파일의 url?
 from django.conf.urls.static import static  # 장고 url
 from django.conf import settings
+
+# Django REST Framework API Auto create
+# from django.urls import url
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from rest_framework import permissions
+ 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -29,3 +36,29 @@ urlpatterns = [
     path("api/v1/users/", include("users.urls")),
     path("api/v1/wikis/", include("wikis.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title='API 문서 제목',
+        default_version='API 버전',
+        description=
+        '''
+        API 문서 설명
+
+        작성자 : ...
+        ''',
+        terms_of_service='',
+        contact=openapi.Contact(name='이름', email='이메일'),
+        license=openapi.License(name='API 문서 이름')
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+    patterns=urlpatterns,
+)
+
+# drf_yasg url 
+urlpatterns += [
+    path('swagger<str:format>', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+]
