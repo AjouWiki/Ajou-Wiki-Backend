@@ -32,9 +32,11 @@ SECRET_KEY = "django-insecure-pys1*=4!7p(uvk8@462-yl*4kd8cnnwxkg!bd#@(&2@8%8tg$0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = "RENDER" not in os.environ
 
-# ALLOWED_HOSTS = [
-#     "localhost",
-# ]
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "10.0.2.2",
+]
 
 
 # RENDER_EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
@@ -54,7 +56,7 @@ CUSTOM_APPS = [
     "users.apps.UsersConfig",
     "wikis.apps.WikisConfig",
     "wiki_details.apps.WikiDetailsConfig",
-    'drf_yasg',
+    "drf_yasg",
     # "rooms.apps.RoomsConfig",
     # "common.apps.CommonConfig",
     # "experiences.apps.ExperiencesConfig",
