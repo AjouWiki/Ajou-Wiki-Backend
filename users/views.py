@@ -13,9 +13,12 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.core.mail import EmailMessage
 from django.shortcuts import render, redirect
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 class Users(APIView):  # 일반 유저 생성
+    @swagger_auto_schema(request_body=serializers.UserSerializer, responses={200: serializers.UserSerializer(), 404: "데이터 에러"},)
     def post(self, request):
         password = request.data.get("password")
         if not password:
@@ -47,6 +50,7 @@ class Users(APIView):  # 일반 유저 생성
 
 
 class LogIn(APIView):
+    @swagger_auto_schema(request_body=serializers.UserLoginSerializer, responses={200: "로그인 성공", 401: "이메일 인증 실패", 403: "아이디, 패스워드 불일치"},)
     def post(self, request):
         username = request.data.get("username")
         password = request.data.get("password")
@@ -72,6 +76,7 @@ from rest_framework.exceptions import AuthenticationFailed
 
 
 class Activate(APIView):
+    @swagger_auto_schema(responses={200: "유저 활성화", 403: "에러"},)
     def get(self, request, Jwt):
         token = Jwt
         if not token:
@@ -99,6 +104,7 @@ class Activate(APIView):
 
 
 class is_email_available(APIView):
+    @swagger_auto_schema(request_body=serializers.UserEmailSerializer,responses={200: "possible username", 403: "impossible username"},)
     def post(self, request):
         email = request.data.get("email", "None")
         if email == "None":
@@ -111,6 +117,7 @@ class is_email_available(APIView):
 
 
 class is_username_available(APIView):
+    @swagger_auto_schema(request_body=serializers.UserNameSerializer,responses={200: "possible username", 403: "impossible username"},)
     def post(self, request):
         username = request.data.get("username", "None")
         if username == "None":

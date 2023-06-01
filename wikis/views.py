@@ -97,7 +97,7 @@ class WikiDetail(APIView):
             return Response({"result": serializer.data, "status": 200})
         return Response({"result": "데이터 이상", "status": 404})
     
-    # @swagger_auto_schema(responses={200: "위키 삭제", 404: "존재하지 않는 위키입니다."},)
+    @swagger_auto_schema(responses={200: "위키 삭제", 404: "존재하지 않는 위키입니다."},)
     def delete(self, request, pk):
         wiki = self.get_object(pk)
         if wiki == None:
@@ -159,7 +159,7 @@ class SearchWiki(APIView):
             return wiki_list
         except:
             return None
-    @swagger_auto_schema(properties='search', responses={200: serializers.WikiSerializer(), 404: "데이터 에러"},)
+    @swagger_auto_schema(responses={200: serializers.WikiSerializer(), 404: "데이터 에러"},)
     def get(self, request, keyword):
         wiki_list1 = self.get_wiki_list_by_tag(keyword)
         wiki_list2 = self.get_wiki_list_by_keyword(keyword)

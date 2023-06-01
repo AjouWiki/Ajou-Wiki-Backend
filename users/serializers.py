@@ -11,7 +11,7 @@ class UserSerializer(ModelSerializer):
         model = User
         # fields = "__all__"
         exclude = (
-            "password",
+            # "password",
             "id",
             "user_permissions",
             "groups",
@@ -44,4 +44,23 @@ class PrivateUserSerializer(ModelSerializer):
             "student_id",
             "wikis",
             "wiki_details",
+        )
+class UserEmailSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "email",
+        )
+class UserNameSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "username",
+        )
+class UserLoginSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "username",
+            "password"
         )
