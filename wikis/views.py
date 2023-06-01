@@ -4,6 +4,8 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.exceptions import ParseError, NotFound
 from rest_framework.permissions import IsAuthenticated
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 import jwt
 from rest_framework.exceptions import (
     NotFound,
@@ -30,30 +32,34 @@ from django.shortcuts import get_object_or_404
 
 class Wikis(APIView):
     permission_classes = [IsAuthenticated]  # 인증된 유저만
-
+    
+    @swagger_auto_schema(responses={200: serializers.WikiSerializer(), 404: "데이터 에러"},)
     def get(self, request):
         wikis = Wiki.objects.all()
         return Response(serializers.WikiSerializer(wikis, many=True).data)
 
+    @swagger_auto_schema(request_body=serializers.WikiSerializer, responses={200: serializers.WikiSerializer(), 404: "데이터 에러"},)
     def post(self, request):  # 위키 생성
-        user_pk = request.user.pk
+        user = request.user
+        request.data['user_id'] = user.pk
         serializer = serializers.WikiSerializer(data=request.data)
-
+        print(request.data)
         if serializer.is_valid():
-            serializer.save(user_id=user_pk)
+            serializer.save()
             return Response({"result": serializer.data, "status": 200})
-        return Response({"result": "데이터 이상", "status": 404})
+        return Response({"result": serializer.errors, "status": 404})
 
 
 class WikiDetail(APIView):
     permission_classes = [IsAuthenticated]  # 인증된 유저만
-
+    
     def get_object(self, pk):
         try:
             return Wiki.objects.get(pk=pk)
         except:
             return None
-
+        
+    @swagger_auto_schema(responses={200: serializers.WikiSerializer(), 404: "데이터 에러"},)
     def get(self, request, pk):
         wiki = self.get_object(pk)
         if wiki == None:
@@ -63,6 +69,7 @@ class WikiDetail(APIView):
         )
         return Response({"result": serializer.data, "status": 200})
 
+    @swagger_auto_schema(request_body=serializers.WikiSerializer, responses={200: serializers.WikiSerializer(), 404: "데이터 에러"},)
     def put(self, request, pk):
         wiki = self.get_object(pk)
 
@@ -72,10 +79,11 @@ class WikiDetail(APIView):
             partial=True,
         )
         if not serializer.is_valid():
-            return Response(serializer.errors)
+            return Response({"result": serializer.errors, "status": 404})
         serializer.save(user_id=User.objects.filter(id=request.user.pk)[0])
-        return Response(serializer.data)
-
+        return Response({"result": serializer.data, "status": 200})
+    
+    @swagger_auto_schema(request_body=MakeWikiDetailsSerializer, responses={200: MakeWikiDetailsSerializer(), 404: "데이터 에러"},)
     def post(self, request, pk):  # wiki_detail 제작
         wiki = self.get_object(pk)
         user_pk = request.user.pk
@@ -88,7 +96,8 @@ class WikiDetail(APIView):
             serializer.save()
             return Response({"result": serializer.data, "status": 200})
         return Response({"result": "데이터 이상", "status": 404})
-
+    
+    # @swagger_auto_schema(responses={200: "위키 삭제", 404: "존재하지 않는 위키입니다."},)
     def delete(self, request, pk):
         wiki = self.get_object(pk)
         if wiki == None:
@@ -105,7 +114,8 @@ class WikiDetailAPi(APIView):
             return Wiki.objects.get(pk=pk)
         except:
             return None
-
+    
+    @swagger_auto_schema(responses={200: serializers.WikiDetailsSerializer(), 404: "데이터 에러"},)
     def get(self, request, pk, detail_pk):
         wiki_detail = Wiki_Detail.objects.get(pk=detail_pk)
         serializer = serializers.WikiDetailsSerializer(
@@ -113,6 +123,7 @@ class WikiDetailAPi(APIView):
         )
         return Response({"result": serializer.data, "status": 200})
 
+    @swagger_auto_schema(request_body=serializers.WikiDetailsSerializer, responses={200: serializers.WikiDetailsSerializer(), 404: "데이터 에러"},)
     def put(self, request, pk, detail_pk):
         wiki_detail = Wiki_Detail.objects.get(pk=detail_pk)
         serializer = serializers.WikiDetailsSerializer(
@@ -121,14 +132,15 @@ class WikiDetailAPi(APIView):
             partial=True,
         )
         if not serializer.is_valid():
-            return Response(serializer.errors)
+            return Response({"result": "데이터에러", "status": 200})
         serializer.save(user_id=User.objects.filter(id=request.user.pk)[0])
-        return Response(serializer.data)
+        return Response({"result": serializer.data, "status": 200})
 
+    @swagger_auto_schema(responses={200: "위키 디테일 삭제", 404: "데이터 에러"},)
     def delete(self, request, pk, detail_pk):
         wiki_detail = Wiki_Detail.objects.get(pk=detail_pk)
         wiki_detail.delete()
-        return Response({"result": "위키 삭제", "status": 200})
+        return Response({"result": "위키 디테일 삭제", "status": 200})
 
 
 class SearchWiki(APIView):
@@ -147,7 +159,7 @@ class SearchWiki(APIView):
             return wiki_list
         except:
             return None
-
+    @swagger_auto_schema(properties='search', responses={200: serializers.WikiSerializer(), 404: "데이터 에러"},)
     def get(self, request, keyword):
         wiki_list1 = self.get_wiki_list_by_tag(keyword)
         wiki_list2 = self.get_wiki_list_by_keyword(keyword)
@@ -155,8 +167,9 @@ class SearchWiki(APIView):
         result = serializers.WikiSerializer(wiki_list1, many=True)
         result2 = serializers.WikiSerializer(wiki_list2, many=True)
         res = []
+        for i in result.data:
+            res.append(i)
         for i in result2.data:
-            if i in result.data:
+            if i not in result.data:
                 res.append(i)
-
         return Response({"result": res, "status": 200})

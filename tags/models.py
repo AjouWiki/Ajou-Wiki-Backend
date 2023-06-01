@@ -16,7 +16,7 @@ class Tag(models.Model):
 
     wiki_id = models.ForeignKey(
         "wikis.Wiki",
-        related_name="tag",
+        related_name="tags",
         on_delete=models.CASCADE,
         null=True,
     )

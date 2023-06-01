@@ -1,6 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 from .models import Wiki_Detail
 from rest_framework import serializers
+# from users.serializers import UserSerializer
 
 # from users.serializers import UserSerializer
 
