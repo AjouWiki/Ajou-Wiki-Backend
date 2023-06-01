@@ -16,12 +16,15 @@ from django.shortcuts import render, redirect, get_object_or_404, get_list_or_40
 from tags.models import Tag
 from wikis.models import Wiki
 from tags.serializers import TagSerializers
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 # Create your views here.
 
 
 class CreateTag(APIView): # Tag 생성 ( 잘 됨 )
+    @swagger_auto_schema(request_body=TagSerializers, responses={200: "Tag 만들기 성공", 404: "데이터 에러"},)
     def post(self, request):
         tag = request.data.get("tag")
         wiki_id = request.data.get("wiki_id")
@@ -33,6 +36,7 @@ class CreateTag(APIView): # Tag 생성 ( 잘 됨 )
         return Response({"result": "Tag 만들기 성공", "status": 200})
 
 class DeleteTag(APIView): # Tag 제거 ( 잘 됨 )
+    @swagger_auto_schema(request_body=TagSerializers, responses={200: "Tag 지우기 성공", 404: "데이터 에러"},)
     def post(self, request):
         tag = request.data.get("tag")
         wiki_id = request.data.get("wiki_id")
@@ -46,11 +50,13 @@ class DeleteTag(APIView): # Tag 제거 ( 잘 됨 )
         
 
 class GetTagList(APIView): # Tag 조회
+    
     def get_object(self, pk):
         try:
             return Wiki.objects.get(pk=pk)
         except:
             return None
+    @swagger_auto_schema(responses={200: TagSerializers, 404: "데이터 에러"},)
     def get(self, request, pk):
         wiki = self.get_object(pk)
         if wiki == None:
